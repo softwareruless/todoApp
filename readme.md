@@ -46,6 +46,7 @@ The server will start running on port 3000 by default.
 - `GET /api/todos`: Get all todos.
 - `GET /api/todos/:id`: Get a specific todo by ID.
 - `PUT /api/todos/:id`: Update a todo by ID.
+- `PUT /api/todos/:id/finished`: Update Finish Status a todo by ID.
 - `DELETE /api/todos/:id`: Delete a todo by ID.
 
 - `PUT /api/todos/:id/photo`: Update todo photo.

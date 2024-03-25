@@ -7,6 +7,7 @@ interface TodoAttrs {
   photo: string;
   tags: string[];
   userId: string;
+  isFinished: boolean;
 }
 
 // An interfaces that describes the properties
@@ -23,6 +24,7 @@ interface TodoDoc extends mongoose.Document {
   photo: string;
   tags: string[];
   userId: string;
+  isFinished: boolean;
 }
 
 const todoSchema = new mongoose.Schema(
@@ -33,7 +35,7 @@ const todoSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
     photo: {
       type: String,
@@ -46,6 +48,10 @@ const todoSchema = new mongoose.Schema(
     ],
     userId: {
       type: String,
+      required: true,
+    },
+    isFinished: {
+      type: Boolean,
       required: true,
     },
   },

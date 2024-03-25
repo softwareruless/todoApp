@@ -2,6 +2,7 @@ import express from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
+const cors = require('cors');
 
 import { NotFoundError } from './helpers/errors/not-found-error';
 import { errorHandler } from './helpers/middleware/error-handler';
@@ -14,6 +15,7 @@ const app = express();
 app.set('trust proxy', true);
 app.use(express.urlencoded({ extended: true }));
 app.use(json({ limit: '5mb' }));
+app.use(cors());
 app.use(
   cookieSession({
     signed: false,

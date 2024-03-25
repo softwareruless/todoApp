@@ -8,6 +8,9 @@ import { Todo } from '../models/todo';
 import { File } from '../models/file';
 
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -16,8 +19,6 @@ cloudinary.config({
 });
 
 import multer from 'multer';
-import { totalmem } from 'os';
-import { error } from 'console';
 const upload = multer();
 
 const router = express.Router();
@@ -124,14 +125,15 @@ router.get(
 
 //CREATE TODO
 router.post('/api/todos', requireAuth, async (req: Request, res: Response) => {
-  const { name, description, tags } = req.body;
+  const { name } = req.body;
 
   const todo = Todo.build({
     name: name,
-    description: description,
+    description: '',
     photo: '',
-    tags: tags,
+    tags: [],
     userId: req.currentUser!.id,
+    isFinished: false,
   });
   await todo.save();
 
@@ -143,7 +145,7 @@ router.put(
   '/api/todos/:id',
   requireAuth,
   async (req: Request, res: Response) => {
-    const { name, description, photo, tags } = req.body;
+    const { name, description, tags } = req.body;
 
     const todo = await Todo.findOne({
       _id: req.params.id,
@@ -158,6 +160,32 @@ router.put(
       name: name,
       description: description,
       tags: tags,
+    });
+
+    await todo.save();
+
+    res.status(200).send(todo);
+  }
+);
+
+//Finish TODO
+router.put(
+  '/api/todos/:id/finished',
+  requireAuth,
+  async (req: Request, res: Response) => {
+    const { isFinished } = req.body;
+
+    const todo = await Todo.findOne({
+      _id: req.params.id,
+      userId: req.currentUser.id,
+    });
+
+    if (!todo) {
+      throw new NotFoundError();
+    }
+
+    todo.set({
+      isFinished: isFinished,
     });
 
     await todo.save();
@@ -270,7 +298,7 @@ router.delete(
           if (result.error) {
             console.log(result.error);
 
-            throw new BadRequestError("Photo couldn't upload");
+            throw new BadRequestError("Photo couldn't delete");
           }
 
           todo.set({
@@ -290,12 +318,9 @@ router.delete(
 //CREATE FILE
 router.post(
   '/api/todos/:id/files',
+  upload.single('file'),
   requireAuth,
   async (req: Request, res: Response) => {
-    const { name } = req.body;
-
-    // TODO: storage files
-
     const todo = await Todo.findOne({
       _id: req.params.id,
       userId: req.currentUser.id,
@@ -305,13 +330,29 @@ router.post(
       throw new NotFoundError();
     }
 
-    const file = File.build({
-      name: name,
-      todoId: todo.id,
-    });
-    await file.save();
+    cloudinary.uploader
+      .upload_stream(
+        {
+          resource_type: 'auto',
+          type: 'authenticated',
+        },
+        async (error, result) => {
+          if (error) {
+            console.log(error);
 
-    res.status(201).send(file);
+            throw new BadRequestError("File couldn't upload");
+          }
+
+          const file = File.build({
+            name: result.public_id,
+            todoId: todo.id,
+          });
+          await file.save();
+
+          res.status(200).send(file);
+        }
+      )
+      .end(req.file.buffer);
   }
 );
 
@@ -338,8 +379,25 @@ router.delete(
       throw new NotFoundError();
     }
 
-    await file.deleteOne();
-    // await todo.save();
+    if (file.name) {
+      cloudinary.uploader
+        .destroy(file.name, {
+          type: 'authenticated',
+        })
+        .then(async (result) => {
+          if (result.error) {
+            console.log(result.error);
+
+            throw new BadRequestError("File couldn't delete");
+          }
+
+          await file.deleteOne();
+
+          console.log('deleted');
+        });
+    } else {
+      throw await new BadRequestError("File couldn't find");
+    }
 
     res.status(200).send();
   }
@@ -359,9 +417,35 @@ router.get(
       throw new NotFoundError();
     }
 
-    var files = File.find({ todoId: todo.id });
+    var files = await File.find({ todoId: todo.id });
 
-    res.status(200).send(files);
+    var filesUpdated = files.map((x) => {
+      return {
+        name: x.name,
+        id: x._id,
+      };
+    });
+
+    cloudinary.api
+      .resources_by_ids(
+        filesUpdated.map((x) => x.name),
+        {
+          type: 'authenticated',
+        }
+      )
+      .then((result) => {
+        filesUpdated.map((x) => {
+          x.name = result.resources.filter(
+            (a) => a.public_id == x.name
+          )[0]?.secure_url;
+        });
+
+        res.status(200).send(filesUpdated);
+      })
+      .catch((error) => {
+        console.log('error 123', error);
+        throw new BadRequestError("File couldn't find");
+      });
   }
 );
 

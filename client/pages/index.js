@@ -1,25 +1,21 @@
-import UseRequest from '../hooks/use-request';
+import { useEffect, useState } from 'react';
+import { get } from '../hooks/request';
 
-function Landing({ currentUser }) {
+export default function Landing() {
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    get('/api/users/currentuser').then((response) => {
+      // console.log('response', response);
+      setCurrentUser(response.currentUser);
+    });
+  }, []);
+
+  // console.log('currentUser index.js', currentUser);
+
   return currentUser ? (
     <h1>You are signed in</h1>
   ) : (
     <h1>You are not signed in</h1>
   );
 }
-
-Landing.getInitialProps = async (context) => {
-  var result = null;
-
-  const { doRequest, errors } = UseRequest({
-    url: '/api/users/currentuser',
-    method: 'get',
-    onSuccess: (response) => (result = response),
-  });
-
-  await doRequest();
-
-  return result;
-};
-
-export default Landing;

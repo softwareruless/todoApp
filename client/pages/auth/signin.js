@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { post } from '../../hooks/request';
+import { signin } from '../../hooks/request';
 import styles from '../../assets/css/styles.module.scss';
 import Router from 'next/router';
+
+function testFunc() {
+  console.log('test log');
+}
 
 const Signin = () => {
   const [email, setEmail] = useState('');
@@ -11,12 +15,10 @@ const Signin = () => {
     event.preventDefault();
 
     const data = { email, password };
-    // const data = { email };
-    var signinResult = await post('/api/users/signin', data).then((result) => {
-      Router.push('/');
-    });
+    var signinResult = await signin(data, Router.push('/'));
+    // var signinResult = await post('/api/users/signin', data);
 
-    // console.log('signinResult', signinResult);
+    console.log('signinResult', signinResult);
   };
 
   return (

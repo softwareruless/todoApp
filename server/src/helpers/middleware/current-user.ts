@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { cookie } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
 interface UserPayload {

@@ -3,10 +3,6 @@ import { signin } from '../../hooks/request';
 import styles from '../../assets/css/styles.module.scss';
 import Router from 'next/router';
 
-function testFunc() {
-  console.log('test log');
-}
-
 const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,8 +13,6 @@ const Signin = () => {
     const data = { email, password };
     var signinResult = await signin(data, Router.push('/'));
     // var signinResult = await post('/api/users/signin', data);
-
-    console.log('signinResult', signinResult);
   };
 
   return (

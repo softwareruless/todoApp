@@ -5,7 +5,7 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <title>My Page Title</title>
+          <title>Todo App</title>
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         </Head>
         <body>

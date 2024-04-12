@@ -6,18 +6,8 @@ import Layout from '../components/layout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { get } from '../hooks/request';
-
 function App({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
-
-  // const [currentUser, setCurrentUser] = useState(null);
-
-  // get('/api/users/currentuser').then((response) => {
-  //   setCurrentUser(response.data);
-  // });
-
-  // console.log('currentUser app.js', currentUser);
 
   return getLayout(
     <>

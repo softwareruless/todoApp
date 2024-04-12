@@ -24,7 +24,7 @@ export default ({ currentUser }) => {
         <link rel="icon" href="../assets/img/logo.jpg" sizes="any" />
 
         <Link className="navbar-brand" href="/">
-          GitTix
+          Todo App
         </Link>
 
         <div className="d-flex justify-content-end">

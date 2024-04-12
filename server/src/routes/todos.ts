@@ -82,7 +82,6 @@ router.get('/api/todos', requireAuth, async (req: Request, res: Response) => {
       res.status(200).send(todosUpdated);
     })
     .catch((error) => {
-      console.log('error 123', error);
       throw new BadRequestError("Photo couldn't find");
     });
 });
@@ -117,7 +116,6 @@ router.get(
         res.status(200).send(updatedTodo);
       })
       .catch((error) => {
-        console.log('error 123', error);
         throw new BadRequestError("Photo couldn't find");
       });
   }

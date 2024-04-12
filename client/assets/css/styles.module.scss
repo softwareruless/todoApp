@@ -10,3 +10,20 @@ $paddingDef: 1rem;
 }
 
 
+.width100{
+  width: 100%;
+}
+
+.search{
+  border: $secondary 1px solid;
+  border-radius: 20rem;
+}
+
+.item{
+  margin: 2rem 0;
+}
+
+.buttonContainer{
+  display: flex;
+  justify-content: center;
+}

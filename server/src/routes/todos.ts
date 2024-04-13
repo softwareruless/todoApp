@@ -38,10 +38,10 @@ router.get('/api/todos', requireAuth, async (req: Request, res: Response) => {
         { description: new RegExp(search, 'i') },
         { tags: { $in: new RegExp(search, 'i') } },
       ],
-      photo: { $nin: ['photo', ''] },
+      photo: { $nin: ['photo', '', null, undefined] },
     })
-      .limit(perPage)
-      .skip(perPage * page);
+      .skip(perPage * page)
+      .limit(perPage);
   } else {
     todos = await Todo.find({
       userId: req.currentUser.id,
@@ -73,11 +73,14 @@ router.get('/api/todos', requireAuth, async (req: Request, res: Response) => {
       }
     )
     .then((result) => {
+      console.log('result of photos', result);
+
       todosUpdated.map((x) => {
         x.photo = result.resources.filter(
           (a) => a.public_id == x.photo
         )[0]?.secure_url;
       });
+      // console.log('todosUpdated', todosUpdated);
 
       res.status(200).send(todosUpdated);
     })

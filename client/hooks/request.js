@@ -115,4 +115,4 @@ export const signin = (data, onSuccess) =>
   signinRequest(data, 'post', onSuccess);
 export const postForm = (url, data, onSuccess) =>
   request(url, data, 'post', 'FORM', onSuccess);
-export const get = (url, onSuccess) => request(url, onSuccess);
+export const get = (url, data, onSuccess) => request(url, data, onSuccess);

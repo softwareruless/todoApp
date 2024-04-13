@@ -1,29 +1,49 @@
-$primary: #BEE7FF;
-$secondary: #38B6FF;
-$white: #FFFF;
-$gray: #EFEFEF;
+$primary: #bee7ff;
+$secondary: #38b6ff;
+$green: #49ff38;
+$white: #ffff;
+$gray: #efefef;
 $paddingDef: 1rem;
 
-.container{
+.container {
   margin: auto;
   width: 90%;
 }
 
-
-.width100{
+.width100 {
   width: 100%;
 }
 
-.search{
+.search {
   border: $secondary 1px solid;
   border-radius: 20rem;
 }
 
-.item{
+.item {
   margin: 2rem 0;
 }
 
-.buttonContainer{
+.buttonContainer {
   display: flex;
   justify-content: center;
+}
+
+.button {
+  // border: $green 1px solid;
+  // background-color: #ffff;
+  border-radius: 2rem;
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+  margin: 0.8rem 0 0.5rem 0;
+}
+
+.addButton {
+  width: 100%;
+}
+
+.addText {
+  margin-bottom: 0;
 }

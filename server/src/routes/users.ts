@@ -43,9 +43,9 @@ router.post(
       process.env.JWT_KEY!
     );
 
-    req.session = {
-      jwt: userjwt,
-    };
+    // req.session = {
+    //   jwt: userjwt,
+    // };
 
     // res.cookie('session', userjwt).status(201).send(user);
     res.status(201).send(user);
@@ -97,7 +97,6 @@ router.post(
     //   jwt: userjwt,
     // };
 
-    // res.cookie('session', userjwt).status(200).send(existingUser);
     res.status(200).send({ userjwt });
   }
 );

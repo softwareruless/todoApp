@@ -4,8 +4,8 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang="en">
+        <title>Todo App</title>
         <Head>
-          <title>Todo App</title>
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         </Head>
         <body>

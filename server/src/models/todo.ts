@@ -52,7 +52,7 @@ const todoSchema = new mongoose.Schema(
     },
     isFinished: {
       type: Boolean,
-      required: true,
+      required: false,
     },
   },
   {

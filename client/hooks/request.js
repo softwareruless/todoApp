@@ -19,7 +19,6 @@ function parseData(data) {
 }
 
 function request(url, data = false, method = 'get', type = 'JSON', onSuccess) {
-  // axios.defaults.withCredentials = true;
   const jsonHead = {
     'Content-Type': 'application/json',
     Authorization: localStorage.getItem('accessToken'),
@@ -31,10 +30,12 @@ function request(url, data = false, method = 'get', type = 'JSON', onSuccess) {
     }
 
     try {
+      console.log('body on request', body);
       const response = await axios({
         method: method,
         url: process.env.NEXT_PUBLIC_SERVER_URL + url,
-        body,
+        data: body,
+        //TODO check here
         headers: type === 'JSON' ? jsonHead : jsonHead,
       });
 

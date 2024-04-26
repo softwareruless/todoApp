@@ -17,6 +17,7 @@ $paddingDef: 1rem;
 .search {
   border: $secondary 1px solid;
   border-radius: 20rem;
+  padding: 0.5rem;
 }
 
 .item {
@@ -46,4 +47,40 @@ $paddingDef: 1rem;
 
 .addText {
   margin-bottom: 0;
+}
+
+.modal {
+  background-color: black;
+}
+
+.modal h2 {
+  color: white;
+}
+
+.modal p {
+  color: white;
+}
+
+.modal .close {
+  background: none;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  border: 1px solid white;
+  padding: 0 10px;
+  padding-bottom: 2px;
+  position: absolute;
+
+  top: 1rem;
+  right: 1rem;
+}
+
+.modal input {
+  border: $secondary 1px solid;
+  border-radius: 20rem;
+  padding: 0.5rem;
+}
+
+.modal button {
+  border-radius: 2rem;
 }

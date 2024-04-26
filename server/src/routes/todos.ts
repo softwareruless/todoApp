@@ -24,70 +24,78 @@ const upload = multer();
 const router = express.Router();
 
 //GET TODOS
-router.get('/api/todos', requireAuth, async (req: Request, res: Response) => {
-  const { search, page = 0 } = req.body;
+router.get(
+  '/api/todos/list/:page?/:search?',
+  requireAuth,
+  async (req: Request, res: Response) => {
+    var search = req.params.search;
+    var page = parseInt(req.params.page);
 
-  var todos;
-  var perPage = 10;
+    var todos;
+    var perPage = 10;
 
-  if (search) {
-    todos = await Todo.find({
-      userId: req.currentUser.id,
-      $or: [
-        { name: new RegExp(search, 'i') },
-        { description: new RegExp(search, 'i') },
-        { tags: { $in: new RegExp(search, 'i') } },
-      ],
-      photo: { $nin: ['photo', '', null, undefined] },
-    })
-      .skip(perPage * page)
-      .limit(perPage);
-  } else {
-    todos = await Todo.find({
-      userId: req.currentUser.id,
-      photo: { $nin: ['photo', '', null, undefined] },
-    })
-      .skip(perPage * page)
-      .limit(perPage);
-  }
+    if (search) {
+      todos = await Todo.find({
+        userId: req.currentUser.id,
+        $or: [
+          { name: new RegExp(search, 'i') },
+          { description: new RegExp(search, 'i') },
+          { tags: { $in: new RegExp(search, 'i') } },
+        ],
+        // photo: { $nin: ['photo', '', null, undefined] },
+        photo: { $nin: ['photo', null, undefined] },
+      })
+        .skip(perPage * page)
+        .limit(perPage);
+    } else {
+      todos = await Todo.find({
+        userId: req.currentUser.id,
+        // photo: { $nin: ['photo', '', null, undefined] },
+        photo: { $nin: ['photo', null, undefined] },
+      })
+        .skip(perPage * page)
+        .limit(perPage);
+    }
 
-  if (!todos) {
-    throw new NotFoundError();
-  }
+    if (!todos) {
+      throw new NotFoundError();
+    }
+    // console.log('todos raw', todos);
 
-  var todosUpdated = todos.map((x) => {
-    return {
-      photo: x.photo,
-      name: x.name,
-      description: x.description,
-      tags: x.tags,
-      id: x._id,
-    };
-  });
-
-  cloudinary.api
-    .resources_by_ids(
-      todosUpdated.map((x) => x.photo),
-      {
-        type: 'authenticated',
-      }
-    )
-    .then((result) => {
-      console.log('result of photos', result);
-
-      todosUpdated.map((x) => {
-        x.photo = result.resources.filter(
-          (a) => a.public_id == x.photo
-        )[0]?.secure_url;
-      });
-      // console.log('todosUpdated', todosUpdated);
-
-      res.status(200).send(todosUpdated);
-    })
-    .catch((error) => {
-      throw new BadRequestError("Photo couldn't find");
+    var todosUpdated = todos.map((x) => {
+      return {
+        photo: x.photo,
+        name: x.name,
+        description: x.description,
+        tags: x.tags,
+        id: x._id,
+      };
     });
-});
+    // console.log('todosUpdated', todosUpdated);
+
+    cloudinary.api
+      .resources_by_ids(
+        todosUpdated.map((x) => x.photo),
+        {
+          type: 'authenticated',
+        }
+      )
+      .then((result) => {
+        // console.log('result of photos', result);
+
+        todosUpdated.map((x) => {
+          x.photo = result.resources.filter(
+            (a) => a.public_id == x.photo
+          )[0]?.secure_url;
+        });
+
+        res.status(200).send(todosUpdated);
+      })
+      .catch((error) => {
+        throw new BadRequestError("Photo couldn't find");
+      });
+  }
+);
 
 //GET TODO DETAIL
 router.get(
@@ -156,6 +164,7 @@ router.put(
     if (!todo) {
       throw new NotFoundError();
     }
+    console.log('tags on put todo', name, description, tags);
 
     todo.set({
       name: name,
